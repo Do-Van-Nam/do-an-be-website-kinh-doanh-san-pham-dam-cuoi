@@ -34,7 +34,11 @@ const port = process.env.PORT
 app.use(cookieParser());
 app.use(bodyParser.json())
 app.use(cors({
-    origin: ['https://wedding-planner-frontend.up.railway.app','http://localhost:3000', 'https://wedding-planner-frontend-url.railway.app','https://wedding-planner-frontend-sigma.vercel.app'],
+    origin: ['https://wedding-planner-frontend.up.railway.app',
+      'http://localhost:3000',
+      'http://localhost:3001',
+      
+      'https://wedding-planner-frontend-url.railway.app','https://wedding-planner-frontend-sigma.vercel.app'],
     credentials:true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Chấp nhận các phương thức yêu cầu
   allowedHeaders: ['Content-Type', 'Authorization'] // Đảm bảo các header cần thiết được phép sử dụng
@@ -58,7 +62,8 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../src/public', 'index.html'));
     // res.send("Welcome to Wedding Planner API!");
 });
-
+// o moi truong dev port 5713
+// o moi truong production comment doan duoi 
 // app.listen(port, () => {
 //     console.log(`Example app listening on port ${port}`)
 // })
