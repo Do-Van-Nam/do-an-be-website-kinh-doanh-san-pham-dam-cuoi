@@ -193,11 +193,11 @@ module.exports = {
     getVendorItemsByAccId,
     getVendorItemById,
     getVendorItemByType,
-    createVendorItem,
-    updateVendorItem,
-    deleteVendorItem,
-    createManyVendorItems,
-    getVendorItemByPlanGroupByType,
-    deleteVendorItemByType,
-    updateFieldInAllItems
+    createVendorItem, 
+    updateVendorItem, 
+    deleteVendorItem, 
+    createManyVendorItems, 
+    getVendorItemByPlanGroupByType, 
+    deleteVendorItemByType, 
+    updateFieldInAllItems 
 };

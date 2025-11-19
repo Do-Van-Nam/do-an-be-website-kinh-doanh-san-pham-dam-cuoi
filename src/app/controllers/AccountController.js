@@ -48,7 +48,7 @@ const createAcc = async (req, res) => {
 }
 const updateAcc = async (req, res) => {
     const id = req.params.id
-    let { name, phone, password, role,mail } = req.body
+    let { name, phone, password, role,mail ,shopName,shopAddress} = req.body
     try {
 const updatedAccount = {};
 
@@ -56,6 +56,8 @@ const updatedAccount = {};
     if (phone) updatedAccount.phone = phone;
     if (role) updatedAccount.role = role;
     if (mail) updatedAccount.mail = mail;
+    if (shopName) updatedAccount.shopName = shopName;
+    if (shopAddress) updatedAccount.shopAddress = shopAddress;
 
     // Chỉ mã hoá nếu có mật khẩu mới
     if (password) {
@@ -72,6 +74,43 @@ const updatedAccount = {};
         return res.status(400).json({ message: 'Server error' })
     }
 }
+const signUpShop = async (req, res) => {
+  const { accId, shopName, shopAddress } = req.body;
+
+  try {
+    // kiểm tra dữ liệu
+    if (!accId || !shopName || !shopAddress) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // tìm tài khoản đã tồn tại
+    const user = await Account.findById(accId);
+
+    if (!user) {
+      return res.status(404).json({ message: "Account not found" });
+    }
+
+    // cập nhật thông tin shop
+    const updated = await Account.findByIdAndUpdate(
+      accId,
+      {
+        role: "seller",
+        shopName,
+        shopAddress
+      },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      message: "Shop registration successful",
+      user: updated
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 const deleteAcc  = async (req,res)=>{
     const id = req.params.id
     try {
@@ -118,4 +157,4 @@ const updateAccountField = async (req, res) => {
     }
 };
 
-module.exports = {getAccById,updateAccountField, getAccs, createAcc , updateAcc ,deleteAcc,checkAuth }
+module.exports = {getAccById,updateAccountField, getAccs, createAcc ,signUpShop, updateAcc ,deleteAcc,checkAuth }

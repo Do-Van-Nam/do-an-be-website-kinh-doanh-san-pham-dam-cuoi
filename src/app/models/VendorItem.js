@@ -6,13 +6,19 @@ const VendorItem = new Schema({
     name : { type : String, },
     type : { type : String, },
     description : { type : String, },
+    rate : {type: Number,default:0},
+    noReview : {type: Number,default:0},
+    imgLink: {type:String},
+    typeVendor : {type:String},  // sell, rent , both
+    priceSell: {type:Number},
+    priceRent: {type:Number},
+  
     address: {type:String},
     subInfo : { type : String, },
     priceFrom : {type: Number},
     priceTo : {type: Number},
-    rate : {type: Number,default:0},
-    noReview : {type: Number,default:0},
-    imgLink: {type:String}
+   
+    
 })
 
 module.exports = mongoose.model('VendorItem' , VendorItem)
