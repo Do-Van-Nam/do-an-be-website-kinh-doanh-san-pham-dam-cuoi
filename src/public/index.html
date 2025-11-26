@@ -452,7 +452,7 @@
         </tr>
         <tr>
             <td>46</td>
-            <td>/vendorItems/:accId</td>
+            <td>/vendorItem/:accId</td>
             <td>GET</td>
             <td>accId</td>
             <td>Danh sách các VendorItems theo accId</td>
@@ -460,7 +460,7 @@
         </tr>
         <tr>
             <td>47</td>
-            <td>/vendorItems/type/:type</td>
+            <td>/vendorItem/type/:type</td>
             <td>GET</td>
             <td>type</td>
             <td>Danh sách các VendorItems theo loại (type)</td>
@@ -468,7 +468,7 @@
         </tr>
         <tr>
             <td>48</td>
-            <td>/vendorItems/:id</td>
+            <td>/vendorItem/:id</td>
             <td>GET</td>
             <td>id</td>
             <td>Thông tin chi tiết của VendorItem theo id</td>
@@ -476,15 +476,15 @@
         </tr>
         <tr>
             <td>49</td>
-            <td>/vendorItems</td>
+            <td>/vendorItem</td>
             <td>POST</td>
-            <td>accId, name, type, description, subInfo, priceFrom, priceTo</td>
+            <td>accId, name, type, description,imgLink,typeVendor,priceSell,priceRent</td>
             <td>VendorItem mới</td>
             <td>Tạo một VendorItem mới cho tài khoản với thông tin cung cấp</td>
         </tr>
         <tr>
             <td>50</td>
-            <td>/vendorItems/bulk</td>
+            <td>/vendorItem/bulk</td>
             <td>POST</td>
             <td>vendorItems (array)</td>
             <td>Thông tin các VendorItems đã thêm</td>
@@ -492,15 +492,15 @@
         </tr>
         <tr>
             <td>51</td>
-            <td>/vendorItems/:id</td>
+            <td>/vendorItem/:id</td>
             <td>PUT</td>
-            <td>id, accId, name, type, description, subInfo, priceFrom, priceTo</td>
+            <td>id, accId, name, type, description, imgLink,typeVendor,priceSell,priceRent</td>
             <td>Thông tin VendorItem đã được cập nhật</td>
             <td>Cập nhật thông tin của VendorItem theo id cho trước</td>
         </tr>
         <tr>
             <td>52</td>
-            <td>/vendorItems/:id</td>
+            <td>/vendorItem/:id</td>
             <td>DELETE</td>
             <td>id</td>
             <td>Thông báo xóa thành công và thông tin VendorItem đã bị xóa</td>
@@ -508,7 +508,7 @@
         </tr>
         <tr>
             <td>53</td>
-            <td>/vendorItems/type/:type</td>
+            <td>/vendorItem/type/:type</td>
             <td>DELETE</td>
             <td>type</td>
             <td>Thông báo xóa thành công</td>
@@ -516,7 +516,7 @@
         </tr>
         <tr>
             <td>54</td>
-            <td>/vendorItems/plan/:accId</td>
+            <td>/vendorItem/plan/:accId</td>
             <td>GET</td>
             <td>accId</td>
             <td>Danh sách các VendorItems đã được nhóm theo type</td>
@@ -524,7 +524,7 @@
         </tr>
         <tr>
             <td>55</td>
-            <td>/vendorItems/updateAll</td>
+            <td>/vendorItem/updateAll</td>
             <td>PUT</td>
             <td>field, newValue</td>
             <td>Thông báo cập nhật thành công và thông tin về các VendorItems đã được cập nhật</td>

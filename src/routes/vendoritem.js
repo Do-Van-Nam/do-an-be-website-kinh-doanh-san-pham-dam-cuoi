@@ -12,6 +12,6 @@ router.put('/updateAll', updateFieldInAllItems)
 router.delete('/:id',managerAuthMiddleware, deleteVendorItem)
 router.delete('/type/:type', deleteVendorItemByType)
 router.post('/', createVendorItem)
- router.post('/addManyVendorItems', createManyVendorItems)
+router.post('/addManyVendorItems', createManyVendorItems)
 
 module.exports = router

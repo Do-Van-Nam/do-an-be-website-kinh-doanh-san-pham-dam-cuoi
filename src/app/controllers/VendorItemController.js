@@ -49,14 +49,14 @@ const getVendorItemById = async (req, res) => {
 
 // Tạo mới VendorItem
 const createVendorItem = async (req, res) => {
-    const {accId, name, type,description,subInfo,priceFrom,priceTo} = req.body;
+    const {accId, name, type,description,imgLink,typeVendor,priceSell,priceRent} = req.body;
     try {
         const existingVendorItem = await VendorItem.findOne({ name, accId });
         if (existingVendorItem) {
             return res.status(400).json({ message: 'VendorItem already exists!' });
         }
 
-        const newVendorItem = new VendorItem({accId, name, type,description,subInfo,priceFrom,priceTo});
+        const newVendorItem = new VendorItem({accId, name, type,description,imgLink,typeVendor,priceSell,priceRent});
 
         await newVendorItem.save();
         res.status(201).json({ vendoritem: newVendorItem });
@@ -83,11 +83,11 @@ const createManyVendorItems = async (req, res) => {
 // Cập nhật thông tin VendorItem theo id
 const updateVendorItem = async (req, res) => {
     const { id } = req.params;
-    const { accId, name, type,description,subInfo,priceFrom,priceTo} = req.body;
+    const { accId, name, type,description,imgLink,typeVendor,priceSell,priceRent} = req.body;
     try {
         const updatedVendorItem = await VendorItem.findByIdAndUpdate(
             id,
-            { accId, name, type,description,subInfo,priceFrom,priceTo},
+            { accId, name, type,description,imgLink,typeVendor,priceSell,priceRent},
             { new: true }
         );
 
