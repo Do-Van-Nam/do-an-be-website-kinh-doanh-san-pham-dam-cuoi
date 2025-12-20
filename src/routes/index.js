@@ -13,6 +13,7 @@ const MessageRouter = require('./message')
 const GuestRouter = require('./guest')
 const CartRouter = require('./cart')
 const OrderRouter = require('./order')
+const RecommendRouter = require('./recommend')
 function route(app){
     app.use('/signup',SignupRouter)
     app.use('/login',LoginRouter)
@@ -29,6 +30,7 @@ function route(app){
     app.use('/plan',PlanRouter)
     app.use('/cart',CartRouter)
     app.use('/order',OrderRouter)
+    app.use('/recommend',RecommendRouter)
 }
 
 module.exports = route

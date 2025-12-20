@@ -12,7 +12,7 @@ const getOrderByAccId = async (req, res) => {
     try {
         const { accId } = req.params
 
-        const order = await Order.findOne({ accId })
+        const order = await Order.find({ accId })
 
         if (!order) {
             return res.status(200).json({ order: { accId, items: [] } })
@@ -44,11 +44,11 @@ const addToOrder = async (req, res) => {
             return res.status(400).json({ message: 'Missing accId or itemId' })
         }
 
-        let order = await Order.findOne({ accId })
+       // let order = await Order.findOne({ accId })
 
-        if (!order) {
+     //   if (!order) {
             const newItems = [{ itemId, quantity, price, status }]
-            order = new Order({
+           let order = new Order({
                 accId,
                 items: newItems,
                 paymentStatus: paymentStatus || 'cash',
@@ -59,32 +59,32 @@ const addToOrder = async (req, res) => {
             })
             await order.save()
             return res.status(201).json({ message: 'Order created and item added', order })
-        }
+     //   }
 
-        const existingItem = order.items.find(item => item.itemId === itemId)
+        // const existingItem = order.items.find(item => item.itemId === itemId)
 
-        if (existingItem) {
-            existingItem.quantity += quantity
-            existingItem.price = price || existingItem.price
-            // Only update status if provided
-            if (status && status !== 'pending') {
-                existingItem.status = status
-            }
-        } else {
-            order.items.push({ itemId, quantity, price, status })
-        }
+        // if (existingItem) {
+        //     existingItem.quantity += quantity
+        //     existingItem.price = price || existingItem.price
+        //     // Only update status if provided
+        //     if (status && status !== 'pending') {
+        //         existingItem.status = status
+        //     }
+        // } else {
+        //     order.items.push({ itemId, quantity, price, status })
+        // }
 
-        // Update totalAmount
-        order.totalAmount = calculateTotalAmount(order.items)
+        // // Update totalAmount
+        // order.totalAmount = calculateTotalAmount(order.items)
         
-        // Update optional fields if provided
-        if (paymentStatus) order.paymentStatus = paymentStatus
-        if (typeOrder) order.typeOrder = typeOrder
-        if (startDate) order.startDate = new Date(startDate)
-        if (endDate) order.endDate = new Date(endDate)
+        // // Update optional fields if provided
+        // if (paymentStatus) order.paymentStatus = paymentStatus
+        // if (typeOrder) order.typeOrder = typeOrder
+        // if (startDate) order.startDate = new Date(startDate)
+        // if (endDate) order.endDate = new Date(endDate)
 
-        await order.save()
-        return res.status(200).json({ message: 'Item added to order', order })
+        // await order.save()
+        // return res.status(200).json({ message: 'Item added to order', order })
 
     } catch (error) {
         console.log(error)
@@ -108,16 +108,16 @@ const addManyToOrder = async (req, res) => {
             return res.status(400).json({ message: 'Missing accId or items' })
         }
 
-        let order = await Order.findOne({ accId })
+        // let order = await Order.findOne({ accId })
 
-        if (!order) {
+        // if (!order) {
             const newItems = items.map(({ itemId, quantity = 1, price = 0, status = 'pending' }) => ({
                 itemId,
                 quantity,
                 price,
                 status,
             }))
-            order = new Order({
+        let    order = new Order({
                 accId,
                 items: newItems,
                 paymentStatus: paymentStatus || 'cash',
@@ -128,35 +128,36 @@ const addManyToOrder = async (req, res) => {
             })
             await order.save()
             return res.status(201).json({ message: 'Order created and items added', order })
-        }
+        // }
 
         // Gộp theo itemId
-        items.forEach(({ itemId, quantity = 1, price = 0, status = 'pending' }) => {
-            if (!itemId) return
-            const existingItem = order.items.find(item => item.itemId === itemId)
-            if (existingItem) {
-                existingItem.quantity += quantity
-                existingItem.price = price || existingItem.price
-                // Only update status if provided and not default
-                if (status && status !== 'pending') {
-                    existingItem.status = status
-                }
-            } else {
-                order.items.push({ itemId, quantity, price, status })
-            }
-        })
+        // items.forEach(({ itemId, quantity = 1, price = 0, status = 'pending' }) => {
+        //     if (!itemId) return
+        //     const existingItem = order.items.find(item => item.itemId === itemId)
+        //     if (existingItem) {
+        //         existingItem.quantity += quantity
+        //         existingItem.price = price || existingItem.price
+        //         // Only update status if provided and not default
+        //         if (status && status !== 'pending') {
+        //             existingItem.status = status
+        //         }
+        //     } else {
+        //         order.items.push({ itemId, quantity, price, status })
+        //     }
+        // })
 
-        // Update totalAmount
-        order.totalAmount = calculateTotalAmount(order.items)
+        // // Update totalAmount
+        // order.totalAmount = calculateTotalAmount(order.items)
         
-        // Update optional fields if provided
-        if (paymentStatus) order.paymentStatus = paymentStatus
-        if (typeOrder) order.typeOrder = typeOrder
-        if (startDate) order.startDate = new Date(startDate)
-        if (endDate) order.endDate = new Date(endDate)
+        // // Update optional fields if provided
+        // if (paymentStatus) order.paymentStatus = paymentStatus
+        // if (typeOrder) order.typeOrder = typeOrder
+        // if (startDate) order.startDate = new Date(startDate)
+        // if (endDate) order.endDate = new Date(endDate)
 
-        await order.save()
-        return res.status(200).json({ message: 'Items added to order', order })
+        // await order.save()
+        // return res.status(200).json({ message: 'Items added to order', order })
+   
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: 'Server error' })
