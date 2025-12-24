@@ -6,6 +6,7 @@ const Order = new Schema({
     items : [
         {
             itemId: {type: String},
+            sellerId: {type: String},
             quantity: {type: Number, default: 1},
             status: {type: String, default: 'pending'}, // pending, completed, cancelled, shipping  
             price: {type: Number, default: 0},

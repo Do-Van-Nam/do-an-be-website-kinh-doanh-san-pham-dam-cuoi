@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 const getAccs = async (req, res) => {
     try {
         const accs = await Account.find({})
-        return res.status.json({ accs: accs })
+        return res.status(200).json({ accs: accs })
     } catch (error) {
         console.log(error)
         return res.status(400).json({ message: 'Server error' })
