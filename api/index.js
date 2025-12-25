@@ -41,7 +41,7 @@ app.use(cors({
     origin: ['https://wedding-planner-frontend.up.railway.app',
       'http://localhost:3000',
       'http://localhost:3001',
-      
+      'https://do-an-fe-sigma.vercel.app/',
       'https://wedding-planner-frontend-url.railway.app','https://wedding-planner-frontend-sigma.vercel.app'],
     credentials:true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Chấp nhận các phương thức yêu cầu
