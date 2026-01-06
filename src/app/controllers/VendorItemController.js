@@ -189,6 +189,79 @@ const updateFieldInAllItems = async (req, res) => {
         return res.status(500).json({ message: 'Server error' });
     }
 }
+
+// Cập nhật nhiều VendorItem theo mảng _id
+const updateManyVendorItems = async (req, res) => {
+    const { vendoritem } = req.body;  // Nhận mảng vendorItems từ request body
+
+    try {
+        // Kiểm tra xem vendoritem có tồn tại và là mảng hay không
+        if (!vendoritem || !Array.isArray(vendoritem)) {
+            return res.status(400).json({ message: 'vendoritem must be an array' });
+        }
+
+        if (vendoritem.length === 0) {
+            return res.status(400).json({ message: 'vendoritem array is empty' });
+        }
+
+        const updatedItems = [];
+        const notFoundItems = [];
+
+        // Cập nhật từng vendorItem theo _id
+        for (const item of vendoritem) {
+            const { _id, ...updateData } = item;  // Tách _id ra khỏi dữ liệu cập nhật
+
+            if (!_id) {
+                notFoundItems.push({ item, reason: 'Missing _id' });
+                continue;
+            }
+
+            try {
+                // Loại bỏ các trường không hợp lệ hoặc không cần thiết
+                const validUpdateData = {};
+                const allowedFields = ['accId', 'name', 'type', 'description', 'imgLink', 'typeVendor', 'priceSell', 'priceRent', 'periodRent', 'tags', 'address'];
+                
+                allowedFields.forEach(field => {
+                    if (updateData.hasOwnProperty(field)) {
+                        validUpdateData[field] = updateData[field];
+                    }
+                });
+
+                const updatedItem = await VendorItem.findByIdAndUpdate(
+                    _id,
+                    { $set: validUpdateData },
+                    { new: true }
+                );
+
+                if (updatedItem) {
+                    updatedItems.push(updatedItem);
+                } else {
+                    notFoundItems.push({ _id, reason: 'VendorItem not found' });
+                }
+            } catch (error) {
+                console.error(`Error updating vendor item ${_id}:`, error);
+                notFoundItems.push({ _id, reason: error.message });
+            }
+        }
+
+        // Trả về kết quả
+        const response = {
+            message: `Updated ${updatedItems.length} vendor item(s)`,
+            updatedItems,
+            updatedCount: updatedItems.length
+        };
+
+        if (notFoundItems.length > 0) {
+            response.notFoundItems = notFoundItems;
+            response.notFoundCount = notFoundItems.length;
+        }
+
+        res.json(response);
+    } catch (error) {
+        console.error('Error updating many vendor items:', error);
+        return res.status(500).json({ message: 'Server error', error: error.message });
+    }
+}
 module.exports = {
     getVendorItemsByAccId,
     getVendorItemById,
@@ -199,5 +272,6 @@ module.exports = {
     createManyVendorItems, 
     getVendorItemByPlanGroupByType, 
     deleteVendorItemByType, 
-    updateFieldInAllItems 
+    updateFieldInAllItems,
+    updateManyVendorItems
 };

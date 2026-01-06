@@ -14,10 +14,6 @@ const VendorItem = new Schema({
     priceRent: {type:Number,default:0},
     periodRent: {type:String, default:"day"}, // day, week, month
     tags: [{ type : String , }],
-    // address: {type:String},
-    // subInfo : { type : String, },
-    // priceFrom : {type: Number},
-    // priceTo : {type: Number}, 
 })
 
 module.exports = mongoose.model('VendorItem' , VendorItem)

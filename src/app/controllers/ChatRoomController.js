@@ -3,28 +3,56 @@ const Account = require('../models/Account')
 
 
 const getChatRoomByAccId = async (req, res) => {
-    const {accId} = req.params 
-    try { 
-        let chatrooms = await ChatRoom.find({ $or: [{ user1Id: accId }, { user2Id: accId }] })
- 
-        const otherUsers = chatrooms.map((chatroom) => ({
-            userId: chatroom.user1Id === accId ? chatroom.user2Id : chatroom.user1Id,
-            chatRoomId: chatroom._id
-        })).filter(Boolean);
- 
-        const userPromises = otherUsers.map(e => Account.findById(e.userId))
-        var userData = await Promise.all(userPromises)
-        userData = userData.map((e, i) => {
-            e = e.toObject()
-            e.chatRoomId = otherUsers[i].chatRoomId
-            return e
-        } )
-        return res.status(200).json({ users: userData })
+    const { accId } = req.params;
+    //console.log(accId)
+    try {
+        // Tìm tất cả chatroom mà accId tham gia
+        const chatrooms = await ChatRoom.find({
+            $or: [{ user1Id: accId }, { user2Id: accId }]
+        });
+
+        if (!chatrooms || chatrooms.length === 0) {
+            return res.status(200).json({ users: [] });
+        }
+
+        // Lấy ra userId của người còn lại trong mỗi room
+        const otherUsers = chatrooms.map(chatroom => {
+            const otherUserId = chatroom.user1Id.toString() === accId 
+                ? chatroom.user2Id 
+                : chatroom.user1Id;
+
+            return {
+                userId: otherUserId,
+                chatRoomId: chatroom._id
+            };
+        });
+
+        // Tìm thông tin các user kia (có thể null nếu user bị xóa)
+        const userPromises = otherUsers.map(item => Account.findById(item.userId));
+        const rawUserData = await Promise.all(userPromises);
+
+        // Lọc và xử lý chỉ những user tồn tại
+        const userData = rawUserData
+            .map((user, index) => {
+                if (!user) {
+                    // Optional: log để debug sau này
+                    console.log(`User not found: ${otherUsers[index].userId}`);
+                    return null; // hoặc bỏ qua
+                }
+
+                const userObj = user.toObject(); // giờ user chắc chắn không null
+                userObj.chatRoomId = otherUsers[index].chatRoomId;
+                return userObj;
+            })
+            .filter(Boolean); // loại bỏ các null
+
+        return res.status(200).json({ users: userData });
+
     } catch (error) {
-        console.log(error)
-        return res.status(400).json({ message: 'Server error' })
+        console.error('Error in getChatRoomByAccId:', error);
+        return res.status(500).json({ message: 'Server error' });
     }
-}
+};
 
 // Lấy thông tin ChatRoom theo id
 const getChatRoomById = async (req, res) => {
@@ -47,6 +75,7 @@ const createChatRoom = async (req, res) => {
     try {
         const existingChatRoom = await ChatRoom.findOne({ user1Id, user2Id });
         if (existingChatRoom) {
+            console.log(existingChatRoom)
             return res.status(400).json({ message: 'ChatRoom already exists!' });
         }
 

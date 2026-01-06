@@ -147,4 +147,79 @@ const getNlpData = async (req, res) => {
     }
 };
 
-module.exports = { getNlpData };
+
+// const OPTIMIZE_API_URL = 'http://localhost:8001/optimize'; // URL của file optimize.py
+const OPTIMIZE_API_URL = 'https://nlp-api2.onrender.com/optimize'; // URL của file optimize.py
+
+const getNlpData2 = async (req, res) => {
+    try {
+        const { userPrompt } = req.body;
+        if (!userPrompt) return res.status(400).json({ message: 'userPrompt là bắt buộc' });
+
+        // 1. Parse NLP để lấy budget, style, items
+        const parseResponse = await axios.post('https://nlp-api-service2.onrender.com/parse', {
+            prompt: userPrompt
+        });
+        const { budget = 0, style = [], items: requiredItems = [] } = parseResponse.data;
+
+        // 2. Query Database lấy danh sách ứng viên (Candidate Items)
+        const normalizedStyles = style.map(s => s.trim().toLowerCase());
+        let baseQuery = {};
+        if (normalizedStyles.length > 0) {
+            baseQuery.tags = { $in: normalizedStyles.map(s => new RegExp(s, 'i')) };
+        }
+
+        const allVendorItems = await VendorItem.find(baseQuery).lean();
+
+        // 3. Chuẩn bị dữ liệu cho Python Optimize
+        const itemsForOptimize = allVendorItems.map(item => {
+            const price = (item.typeVendor === 'sell' || item.typeVendor === 'both') 
+                          ? (item.priceSell || item.priceRent) 
+                          : item.priceRent;
+            
+            return {
+                id: item._id.toString(),
+                type: item.type ? item.type.toLowerCase() : 'unknown',
+                price: price || 0,
+                // Tính toán giá trị dựa trên rate và noReview
+                value: (item.rate || 0) * (item.noReview || 1) 
+            };
+        });
+
+        // Xác định danh sách các type mà user yêu cầu cụ thể
+        const requiredTypes = requiredItems.map(item => item.toLowerCase());
+
+        // 4. Gọi Python API để giải bài toán tối ưu
+        const optimizeResponse = await axios.post(OPTIMIZE_API_URL, {
+            budget: budget,
+            required_types: requiredTypes,
+            items: itemsForOptimize
+        });
+
+        const result = optimizeResponse.data;
+
+        // 5. Map ngược lại dữ liệu đầy đủ từ DB để trả về cho Client
+        const finalSelected = result.selected.map(sel => {
+            const fullDetail = allVendorItems.find(i => i._id.toString() === sel.id);
+            return { ...fullDetail, price: sel.price, value: sel.value };
+        });
+
+        return res.status(200).json({
+            parsed: parseResponse.data,
+            suggested: finalSelected,
+            
+                totalCost: result.total_cost,
+                totalValue: result.total_value,
+                remainingBudget: result.remaining_budget,
+                status: result.status,
+                
+             
+                
+        });
+
+    } catch (error) {
+        console.error("Lỗi:", error.message);
+        return res.status(500).json({ message: 'Lỗi xử lý hệ thống', error: error.message });
+    }
+};
+module.exports = { getNlpData, getNlpData2 };
