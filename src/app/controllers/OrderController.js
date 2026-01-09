@@ -233,7 +233,7 @@ const updateOrderStatus = async (req, res) => {
         }
 
         // Validate status values
-        const validStatuses = ['pending', 'completed', 'cancelled', 'shipping']
+        const validStatuses = ['pending', 'completed', 'cancelled', 'shipping',"confirmed"]
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ 
                 message: 'Invalid status. Must be one of: pending, completed, cancelled, shipping' 

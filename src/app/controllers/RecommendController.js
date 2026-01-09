@@ -161,12 +161,13 @@ const getNlpData2 = async (req, res) => {
             prompt: userPrompt
         });
         const { budget = 0, style = [], items: requiredItems = [] } = parseResponse.data;
-
+console.log(parseResponse.data);
         // 2. Query Database lấy danh sách ứng viên (Candidate Items)
         const normalizedStyles = style.map(s => s.trim().toLowerCase());
         let baseQuery = {};
         if (normalizedStyles.length > 0) {
-            baseQuery.tags = { $in: normalizedStyles.map(s => new RegExp(s, 'i')) };
+            // baseQuery.tags = { $in: normalizedStyles.map(s => new RegExp(s, 'i')) };
+            baseQuery.tags = { $in: normalizedStyles };
         }
 
         const allVendorItems = await VendorItem.find(baseQuery).lean();

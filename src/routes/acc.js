@@ -10,7 +10,7 @@ router.get('/getAllAcc',authMiddleware,getAccs)
 router.post('/signUpShop',signUpShop)
 router.post('/',createAcc)
 router.put('/updateField/:accId',updateAccountField)
-router.put('/id/:id',authMiddleware,updateAcc)
+router.put('/id/:id',updateAcc)
 router.delete('/:id',authMiddleware,deleteAcc)
 
 module.exports = router
